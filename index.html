@@ -3,43 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professioneller Teleprompter</title>
+    <title>Luperly BioLinks | Cheffe</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="input-panel">
-        <h2>Skript eingeben</h2>
-        <textarea id="teleprompter-input" placeholder="Hier dein Skript einfügen..."></textarea>
-        <button onclick="setText()">Starten</button>
-    </div>
+    <main id="profile-container">
+        <img id="profile-pic" src="https://via.placeholder.com/150x150.png?text=CHEF" alt="Profilbild">
+        
+        <h1 id="profile-username">luperly.bio/Cheffe</h1>
 
-    <div id="controls">
-        <button id="startButton">Start / Pause</button>
-        <button id="resetButton">Reset</button>
+        <div id="links-container">
+            </div>
         
-        <label for="speed">Geschwindigkeit:</label>
-        <input type="range" id="speed" min="1" max="50" value="10">
-        
-        <label for="fontSize">Größe:</label>
-        <input type="range" id="fontSize" min="30" max="150" value="72">
-        
-        <button onclick="showInputPanel()">Text ändern</button>
-        
-        <select id="mirrorMode">
-            <option value="none">Normal</option>
-            <option value="horizontal">Horizontal spiegeln</option>
-        </select>
-        
-        <button onclick="toggleFullScreen()">Vollbild</button>
-    </div>
+        <button id="open-editor-button">Design bearbeiten</button>
+    </main>
 
-    <div id="prompter-area">
-        <div id="text-container">
-            <p id="prompter-text">Gib dein Skript über das Startfenster ein.</p>
+    <div id="design-editor-panel">
+        <h2>Profil-Design-Editor</h2>
+        
+        <div class="control-group">
+            <label for="bg-color-input">Hintergrundfarbe:</label>
+            <input type="color" id="bg-color-input" data-css-var="--bg-color" value="#0a0a0a">
         </div>
+
+        <div class="control-group">
+            <label for="link-color-input">Link-Farbe:</label>
+            <input type="color" id="link-color-input" data-css-var="--link-color" value="#ffffff">
+        </div>
+
+        <div class="control-group">
+            <label for="link-bg-input">Link-Hintergrund:</label>
+            <input type="color" id="link-bg-input" data-css-var="--link-bg" value="#007bff">
+        </div>
+
+        <div class="control-group">
+            <label for="font-family-select">Schriftart:</label>
+            <select id="font-family-select" data-css-var="--main-font">
+                <option value="Arial, sans-serif">Standard (Arial)</option>
+                <option value="'Georgia', serif">Serif (Georgia)</option>
+                <option value="'Courier New', monospace">Monospace</option>
+            </select>
+        </div>
+
+        <button id="close-editor-button">Speichern & Schließen</button>
     </div>
 
-    <script src="script.js"></script>
+    <script src="editor.js"></script>
 </body>
 </html>
