@@ -2,124 +2,285 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Claire Z. Teleprompter (Cheffe-Edition)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lockerer Teleprompter, Cheffe!</title>
     <style>
-        /* CSS für das Aussehen */
+        /* 🎨 Das Styling für den Teleprompter */
         body {
-            background-color: black; /* Dunkler Hintergrund */
-            color: lime; /* Helle, gut lesbare Schrift (kannst du ändern) */
             font-family: Arial, sans-serif;
             margin: 0;
-            overflow: hidden; /* Verhindert Scrollbalken */
+            padding: 0;
+            background-color: #222; /* Dunkler Hintergrund */
+            color: #fff; /* Heller Text */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* Verhindert das Scrollen der Seite selbst */
         }
-        #text-container {
-            width: 80%; /* Breite des Textes */
-            margin: 0 auto;
-            position: relative;
-            transform: translateY(100vh); /* Startet den Text unterhalb des Sichtfensters */
-            padding-top: 10vh; /* Etwas Puffer am oberen Rand */
-        }
-        #teleprompter-text {
-            font-size: 80px; /* **Wichtig: Große Schrift!** */
-            line-height: 1.5;
-            text-align: center;
-            white-space: pre-wrap; /* Behält die Zeilenumbrüche bei */
-        }
+        
         #controls {
+            padding: 15px;
+            background-color: #333;
+            border-bottom: 2px solid #555;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        #controls label, #controls button, #controls input, #controls select {
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        #controls button {
+            background-color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #controls button:hover {
+            background-color: #0056b3;
+        }
+
+        #prompter-area {
+            flex-grow: 1;
+            overflow: hidden; /* Wichtig für das automatische Scrollen */
+            position: relative;
+        }
+
+        #text-container {
+            position: absolute; /* Positioniert den Text relativ zur Prompter-Area */
+            width: 100%;
+            /* Startposition des Textes: Am unteren Rand, so dass er nach oben scrollt */
+            top: 100%; 
+            transition: transform linear; /* Linearer Übergang für flüssiges Scrollen */
+            padding: 50vh 5% 50vh 5%; /* Vertikaler Abstand, um den Text mittig durchlaufen zu lassen */
+            box-sizing: border-box;
+            text-align: center; /* Text zentrieren */
+        }
+
+        #prompter-text {
+            font-size: 72px; /* Standard-Schriftgröße */
+            line-height: 1.4;
+            color: #00ffaa; /* Auffällige Farbe für den Text */
+        }
+
+        #input-panel {
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            background: #222;
-            padding: 10px;
-            text-align: center;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
         }
-        button {
-            padding: 10px 20px;
+        
+        #input-panel textarea {
+            width: 80%;
+            height: 60%;
+            padding: 20px;
             font-size: 20px;
-            cursor: pointer;
-            margin: 5px;
+            border: 2px solid #007bff;
+            background-color: #444;
+            color: #fff;
+            resize: none;
+            margin-bottom: 20px;
         }
-        input[type="number"] {
-            width: 80px;
-            padding: 10px;
-            font-size: 20px;
+        
+        #input-panel button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #28a745;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div id="text-container">
-    <div id="teleprompter-text">
-Du hast mich ja auch Alfred, […], auf diesen Fünflding küßten wir uns.
-Vor mehr als fünfundvierzig Jahren. Wir liebten uns unter diesen Sträuchern, unter dieser Buche, zwischen Fliegenpilzen und Moos.
-Ich war siebzehn und du noch nicht zwanzig.
-Dann hast du Mathilde Blumhard geheiratet mit ihrem Kleinwarenladen und ich den alten Zachanassian mit seinen Milliarden aus Armenien.
-Er fand mich in einem Hamburger Bordell. […].
-Sie hatte Geld.
+    <div id="input-panel">
+        <h2>Dein Text, Cheffe!</h2>
+        <textarea id="teleprompter-input" placeholder="Gib hier deinen Text ein."></textarea>
+        <button onclick="setText()">Teleprompter starten</button>
+    </div>
 
-Du warst jung und schön. Dir gehörte die Zukunft. Ich wollte dein Glück.
-Ich mußte auf das matte verstehen. […] Ich lebe in einer Hölle, wie du von mir gegangen bist.
-Und leif hüt die Hölle worden.
-[Zu Ill:] Ich schlage mich mit meiner Kameliebürum, die mir jeden Tag die Atmia verhält.
-Mathildechen machte dich nicht glücklich?
-Hauptsache, daß du glücklich bist.
-Er schweigt, und sie raucht.
+    <div id="controls">
+        <button id="startButton">▶️ Start / ⏸️ Pause</button>
+        <button id="resetButton">🔄 Reset</button>
+        
+        <label for="speed">Geschw. (ms/Pixel):</label>
+        <input type="range" id="speed" min="1" max="50" value="10">
+        
+        <label for="fontSize">Größe (px):</label>
+        <input type="range" id="fontSize" min="30" max="150" value="72">
+        
+        <button onclick="showInputPanel()">✍️ Text ändern</button>
+        
+        <select id="mirrorMode">
+            <option value="none">Normal</option>
+            <option value="horizontal">Horizontal spiegeln</option>
+        </select>
+        
+        <button onclick="toggleFullScreen()">⛶ Fullscreen</button>
+    </div>
 
-</div>
-</div>
+    <div id="prompter-area">
+        <div id="text-container">
+            <p id="prompter-text">Gib deinen Text im Eingabefeld ein, Cheffe!</p>
+        </div>
+    </div>
 
-<div id="controls">
-    <label for="speed">Geschwindigkeit (ms): </label>
-    <input type="number" id="speed" value="50" min="10" max="200">
-    <button onclick="startScroll()">Start / Pause</button>
-    <button onclick="resetScroll()">Zurücksetzen</button>
-    <button onclick="changeFontSize(-10)">Schrift kleiner</button>
-    <button onclick="changeFontSize(10)">Schrift größer</button>
-</div>
-
-<script>
-    const textContainer = document.getElementById('text-container');
-    const speedInput = document.getElementById('speed');
-    let scrollInterval;
-
-    // Startet/Pausiert den Scrollvorgang
-    function startScroll() {
-        if (scrollInterval) {
-            clearInterval(scrollInterval);
-            scrollInterval = null;
-        } else {
-            const scrollSpeed = parseInt(speedInput.value);
-            // Scrollt den Text um 1 Pixel pro Intervall
-            scrollInterval = setInterval(() => {
-                textContainer.style.transform = `translateY(${textContainer.getBoundingClientRect().top - 1}px)`;
-                // Stoppt, wenn der Text oben ganz verschwunden ist
-                if (textContainer.getBoundingClientRect().bottom < 0) {
-                    clearInterval(scrollInterval);
-                    scrollInterval = null;
-                }
-            }, scrollSpeed);
+    <script>
+        // 🧠 Das JavaScript für die Logik
+        
+        const textContainer = document.getElementById('text-container');
+        const prompterText = document.getElementById('prompter-text');
+        const speedInput = document.getElementById('speed');
+        const fontSizeInput = document.getElementById('fontSize');
+        const startButton = document.getElementById('startButton');
+        const mirrorMode = document.getElementById('mirrorMode');
+        const inputPanel = document.getElementById('input-panel');
+        const teleprompterInput = document.getElementById('teleprompter-input');
+        
+        let animationFrameId = null;
+        let isRunning = false;
+        let startTime = null;
+        let textHeight = 0;
+        
+        // --- Setup und Steuerung ---
+        
+        // Text aus dem Input-Feld in den Prompter übertragen und das Eingabefenster verstecken
+        function setText() {
+            const text = teleprompterInput.value.trim().replace(/\n/g, '<br><br>');
+            if (text) {
+                prompterText.innerHTML = text;
+                inputPanel.style.display = 'none';
+                resetPrompter();
+            } else {
+                alert('Cheffe, gib doch bitte Text ein!');
+            }
         }
-    }
+        
+        function showInputPanel() {
+            inputPanel.style.display = 'flex';
+        }
 
-    // Setzt den Text an den Startpunkt zurück
-    function resetScroll() {
-        clearInterval(scrollInterval);
-        scrollInterval = null;
-        textContainer.style.transform = 'translateY(100vh)';
-    }
+        // Setzt den Prompter auf die Startposition zurück und stoppt das Scrollen
+        function resetPrompter() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+                isRunning = false;
+                startButton.textContent = '▶️ Start / ⏸️ Pause';
+            }
+            // Setzt die Scroll-Position auf den Start (100% unten)
+            textContainer.style.transform = 'translateY(0)';
+            textContainer.style.transitionDuration = '0s'; // Reset Transition
+        }
+        
+        function toggleRunning() {
+            if (isRunning) {
+                pausePrompter();
+            } else {
+                startPrompter();
+            }
+        }
 
-    // Ändert die Schriftgröße
-    function changeFontSize(delta) {
-        const textElement = document.getElementById('teleprompter-text');
-        let currentSize = parseInt(window.getComputedStyle(textElement).fontSize);
-        textElement.style.fontSize = `${currentSize + delta}px`;
-    }
+        function startPrompter() {
+            if (isRunning) return;
+            
+            // Textgröße und Höhe neu berechnen
+            textHeight = textContainer.offsetHeight;
+            
+            // Geschwindigkeit aus dem Input holen (höherer Wert = langsamer, da ms/px)
+            const speedValue = parseInt(speedInput.value); 
+            // Berechne die benötigte Zeit für die gesamte Strecke in Sekunden
+            // Strecke: textHeight (Pixel) / Geschwindigkeit (Pixel pro Sekunde)
+            const durationSeconds = textHeight * speedValue / 1000;
+            
+            // Setze die Transition-Dauer
+            textContainer.style.transitionDuration = `${durationSeconds}s`;
+            
+            // Setze die Ziel-Position (nach oben, um die Höhe des Textes zu verdecken)
+            // Die Transformation ist relativ zur ursprünglichen Position (top: 100%)
+            // Der Text muss um seine eigene Höhe nach oben bewegt werden (-textHeight)
+            const targetY = -textHeight - (window.innerHeight * 0.5); // Etwas weiter schieben, damit der letzte Satz auch mittig durchläuft
 
-    // Sorgt dafür, dass der Text beim Laden auf die Startposition gesetzt wird
-    window.onload = resetScroll;
-</script>
+            textContainer.style.transform = `translateY(${targetY}px)`;
+            
+            isRunning = true;
+            startButton.textContent = '⏸️ Pause';
+        }
 
+        function pausePrompter() {
+            if (!isRunning) return;
+            
+            // Aktuelle Position speichern
+            const currentTransform = window.getComputedStyle(textContainer).transform;
+            textContainer.style.transform = currentTransform;
+            
+            // Scrollen stoppen, indem die Transition-Dauer auf 0 gesetzt wird
+            textContainer.style.transitionDuration = '0s';
+            
+            isRunning = false;
+            startButton.textContent = '▶️ Start / ⏸️ Pause';
+        }
+
+        // --- Event Listener ---
+        
+        startButton.addEventListener('click', toggleRunning);
+        document.getElementById('resetButton').addEventListener('click', resetPrompter);
+        
+        // Schriftgröße anpassen
+        fontSizeInput.addEventListener('input', () => {
+            prompterText.style.fontSize = fontSizeInput.value + 'px';
+            // Muss neu berechnet werden, wenn der Text während des Scrolls läuft
+            if (isRunning) {
+                pausePrompter(); // Erst pausieren, dann starten (was die Werte neu berechnet)
+            }
+        });
+        
+        // Spiegeleffekte
+        mirrorMode.addEventListener('change', (e) => {
+            if (e.target.value === 'horizontal') {
+                prompterText.style.transform = 'scaleX(-1)';
+            } else {
+                prompterText.style.transform = 'scaleX(1)';
+            }
+        });
+        
+        // Fullscreen-Funktion
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        // Event, das ausgelöst wird, wenn die CSS-Transition fertig ist (Text ist durchgelaufen)
+        textContainer.addEventListener('transitionend', () => {
+            if (isRunning) {
+                // Wenn der Scroll durch ist, stoppen und zurücksetzen
+                resetPrompter();
+            }
+        });
+
+        // Setzt die initialen Werte
+        prompterText.style.fontSize = fontSizeInput.value + 'px';
+        
+        // Beim Laden direkt das Eingabefeld zeigen
+        window.onload = showInputPanel;
+        
+    </script>
 </body>
 </html>
