@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Claire Z. Teleprompter (Cheffe-Edition)</title>
+    <style>
+        /* CSS für das Aussehen */
+        body {
+            background-color: black; /* Dunkler Hintergrund */
+            color: lime; /* Helle, gut lesbare Schrift (kannst du ändern) */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden; /* Verhindert Scrollbalken */
+        }
+        #text-container {
+            width: 80%; /* Breite des Textes */
+            margin: 0 auto;
+            position: relative;
+            transform: translateY(100vh); /* Startet den Text unterhalb des Sichtfensters */
+            padding-top: 10vh; /* Etwas Puffer am oberen Rand */
+        }
+        #teleprompter-text {
+            font-size: 80px; /* **Wichtig: Große Schrift!** */
+            line-height: 1.5;
+            text-align: center;
+            white-space: pre-wrap; /* Behält die Zeilenumbrüche bei */
+        }
+        #controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #222;
+            padding: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="text-container">
+    <div id="teleprompter-text">
+Du hast mich ja auch Alfred, […], auf diesen Fünflding küßten wir uns.
+Vor mehr als fünfundvierzig Jahren. Wir liebten uns unter diesen Sträuchern, unter dieser Buche, zwischen Fliegenpilzen und Moos.
+Ich war siebzehn und du noch nicht zwanzig.
+Dann hast du Mathilde Blumhard geheiratet mit ihrem Kleinwarenladen und ich den alten Zachanassian mit seinen Milliarden aus Armenien.
+Er fand mich in einem Hamburger Bordell. […].
+Sie hatte Geld.
+
+Du warst jung und schön. Dir gehörte die Zukunft. Ich wollte dein Glück.
+Ich mußte auf das matte verstehen. […] Ich lebe in einer Hölle, wie du von mir gegangen bist.
+Und leif hüt die Hölle worden.
+[Zu Ill:] Ich schlage mich mit meiner Kameliebürum, die mir jeden Tag die Atmia verhält.
+Mathildechen machte dich nicht glücklich?
+Hauptsache, daß du glücklich bist.
+Er schweigt, und sie raucht.
+
+</div>
+</div>
+
+<div id="controls">
+    <label for="speed">Geschwindigkeit (ms): </label>
+    <input type="number" id="speed" value="50" min="10" max="200">
+    <button onclick="startScroll()">Start / Pause</button>
+    <button onclick="resetScroll()">Zurücksetzen</button>
+    <button onclick="changeFontSize(-10)">Schrift kleiner</button>
+    <button onclick="changeFontSize(10)">Schrift größer</button>
+</div>
+
+<script>
+    const textContainer = document.getElementById('text-container');
+    const speedInput = document.getElementById('speed');
+    let scrollInterval;
+
+    // Startet/Pausiert den Scrollvorgang
+    function startScroll() {
+        if (scrollInterval) {
+            clearInterval(scrollInterval);
+            scrollInterval = null;
+        } else {
+            const scrollSpeed = parseInt(speedInput.value);
+            // Scrollt den Text um 1 Pixel pro Intervall
+            scrollInterval = setInterval(() => {
+                textContainer.style.transform = `translateY(${textContainer.getBoundingClientRect().top - 1}px)`;
+                // Stoppt, wenn der Text oben ganz verschwunden ist
+                if (textContainer.getBoundingClientRect().bottom < 0) {
+                    clearInterval(scrollInterval);
+                    scrollInterval = null;
+                }
+            }, scrollSpeed);
+        }
+    }
+
+    // Setzt den Text an den Startpunkt zurück
+    function resetScroll() {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+        textContainer.style.transform = 'translateY(100vh)';
+    }
+
+    // Ändert die Schriftgröße
+    function changeFontSize(delta) {
+        const textElement = document.getElementById('teleprompter-text');
+        let currentSize = parseInt(window.getComputedStyle(textElement).fontSize);
+        textElement.style.fontSize = `${currentSize + delta}px`;
+    }
+
+    // Sorgt dafür, dass der Text beim Laden auf die Startposition gesetzt wird
+    window.onload = resetScroll;
+</script>
+
+</body>
+</html>
