@@ -1,122 +1,128 @@
+/* CSS Variablen für dynamische Anpassung */
+:root {
+    --bg-color: #0a0a0a;
+    --link-color: #ffffff;
+    --link-bg: #007bff;
+    --main-font: Arial, sans-serif;
+    --text-color: #ffffff;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--main-font);
     margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    padding: 20px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    justify-content: center;
+    min-height: 100vh;
 }
 
-#controls {
-    padding: 10px 20px;
-    background-color: #222;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    align-items: center;
-    border-bottom: 1px solid #333;
-    z-index: 999;
+/* Profil-Container */
+#profile-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
 }
 
-#controls label {
+#profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid var(--link-bg);
+}
+
+#profile-username {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: var(--link-color);
+}
+
+/* Link-Styling */
+.profile-link {
+    display: block;
+    text-decoration: none;
+    background-color: var(--link-bg);
+    color: var(--link-color);
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    font-size: 1.1em;
     font-weight: 600;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
-#controls button, #controls input[type="range"], #controls select {
+.profile-link:hover {
+    transform: translateY(-2px);
+    background-color: color-mix(in srgb, var(--link-bg) 85%, black);
+}
+
+/* Editor Panel */
+#open-editor-button {
+    margin-top: 50px;
+    padding: 10px 20px;
+    background-color: #666;
     color: #fff;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: #333;
     cursor: pointer;
-    transition: background-color 0.2s;
+    border-radius: 5px;
 }
 
-#controls button:hover {
-    background-color: #007bff;
-}
-
-#reading-guide {
-    position: fixed;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #007bff;
-    transform: translateY(-50%);
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-    z-index: 50;
-}
-
-#prompter-area {
-    flex-grow: 1;
-    overflow: hidden;
-    position: relative;
-}
-
-#text-container {
-    position: absolute;
-    width: 100%;
-    top: 100%; 
-    transition: transform linear;
-    padding: 50vh 5% 50vh 5%;
-    box-sizing: border-box;
-    text-align: center; 
-}
-
-#prompter-text {
-    font-size: 72px; 
-    line-height: 1.5;
-    color: #ffffff; 
-}
-
-#input-panel {
+#design-editor-panel {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.98);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-#input-panel h2 {
-    color: #007bff;
-    margin-bottom: 20px;
-}
-
-#input-panel textarea {
-    width: 80%;
-    max-width: 700px;
-    height: 50%;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: #1c1c1c;
     padding: 20px;
-    font-size: 18px;
-    border: 1px solid #007bff;
-    background-color: #2a2a2a;
-    color: #fff;
-    resize: none;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none; /* Wird per JS angezeigt/versteckt */
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+#design-editor-panel h2 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
     margin-bottom: 20px;
-    border-radius: 5px;
+    color: var(--link-bg);
 }
 
-#input-panel button {
-    padding: 12px 30px;
-    font-size: 16px;
-    background-color: #28a745; 
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.control-group input[type="color"],
+.control-group select {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #555;
+    background-color: #333;
+    padding: 5px;
+    border-radius: 4px;
+    box-sizing: border-box;
     cursor: pointer;
-    border-radius: 5px;
-    border: none;
 }
 
-#input-panel button:hover {
-    background-color: #1e7e34;
+#close-editor-button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
